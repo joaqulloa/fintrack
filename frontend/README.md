@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinTrack — Frontend
 
-## Getting Started
+Interfaz de [FinTrack](../README.md): dashboard de finanzas personales en CLP.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router + Cache Components), React 19, TypeScript 5, Tailwind CSS 4, Recharts.
+
+## Desarrollo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La app corre en `http://localhost:3000` y consume la API Django en `NEXT_PUBLIC_API_URL` (por defecto `http://localhost:8000`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Ruta | Contenido |
+| --- | --- |
+| `app/(app)/` | Rutas de la aplicación: `/`, `/transactions`, `/categories`, `/settings` |
+| `components/dashboard/` | Tarjetas de resumen, gráficos y selector de período |
+| `components/transactions/` | Listado, filtros y formulario de transacciones |
+| `components/ui/` | Componentes reutilizables (select, skeletons, estados vacíos) |
+| `lib/api/` | Cliente HTTP y funciones por endpoint |
+| `lib/utils/` | Formato de moneda/fecha en CLP y helpers de período |
 
-## Learn More
+## Comandos
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm dev                # servidor de desarrollo
+pnpm lint               # ESLint
+pnpm exec tsc --noEmit  # verificación de tipos
+pnpm build              # build de producción
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Las páginas que consumen datos en vivo usan `connection()` + `<Suspense>` (patrón de Cache Components de Next.js), por lo que el build no necesita el backend levantado.

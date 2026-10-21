@@ -62,7 +62,7 @@ export default function SummaryCard({
             ) : (
               <ArrowDownRight size={14} />
             )}
-            {Math.abs(change)}%
+            {Math.abs(change).toFixed(1)}%
           </span>
         )}
 

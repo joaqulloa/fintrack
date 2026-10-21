@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { Category, Transaction, TransactionType } from "@/types";
 import type { TransactionInput } from "@/lib/api/transactions";
 import { getCategories } from "@/lib/api/categories";
+import Select from "@/components/ui/select";
 
 interface TransactionFormProps {
   initial?: Transaction | null;
@@ -43,7 +44,21 @@ export default function TransactionForm({
     getCategories().then(setCategories);
   }, []);
 
-  const availableCategories = categories.filter((c) => c.type === type);
+  const availableCategories = useMemo(
+    () => categories.filter((c) => c.type === type),
+    [categories, type],
+  );
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: "", label: "Selecciona una categoría" },
+      ...availableCategories.map((category) => ({
+        value: String(category.id),
+        label: category.name,
+      })),
+    ],
+    [availableCategories],
+  );
 
   const handleTypeChange = (nextType: TransactionType) => {
     setType(nextType);
@@ -91,10 +106,14 @@ export default function TransactionForm({
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            htmlFor="transaction-description"
+            className="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Descripción
           </label>
           <input
+            id="transaction-description"
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -131,10 +150,14 @@ export default function TransactionForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            htmlFor="transaction-amount"
+            className="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Monto (CLP)
           </label>
           <input
+            id="transaction-amount"
             type="number"
             min="1"
             step="1"
@@ -149,10 +172,14 @@ export default function TransactionForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            htmlFor="transaction-date"
+            className="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Fecha
           </label>
           <input
+            id="transaction-date"
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -161,23 +188,21 @@ export default function TransactionForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            htmlFor="transaction-category"
+            className="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Categoría
           </label>
-          <select
-            value={categoryId}
-            onChange={(e) =>
-              setCategoryId(e.target.value ? Number(e.target.value) : "")
+          <Select
+            id="transaction-category"
+            value={categoryId === "" ? "" : String(categoryId)}
+            options={categoryOptions}
+            invalid={!!errors.categoryId}
+            onChange={(value) =>
+              setCategoryId(value ? Number(value) : "")
             }
-            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-          >
-            <option value="">Selecciona una categoría</option>
-            {availableCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          />
           {errors.categoryId && (
             <p className="mt-1.5 text-xs text-rose-600">{errors.categoryId}</p>
           )}

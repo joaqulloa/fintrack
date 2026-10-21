@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
 import { getCategories } from "@/lib/api/categories";
+import { CategoriesSkeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "Categorías",
 };
 
-export default async function CategoriesPage() {
+export default function CategoriesPage() {
+  return (
+    <Suspense fallback={<CategoriesSkeleton />}>
+      <CategoriesContent />
+    </Suspense>
+  );
+}
+
+async function CategoriesContent() {
+  await connection();
+
   const categories = await getCategories();
 
   const income = categories.filter((c) => c.type === "income");

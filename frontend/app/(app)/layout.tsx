@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Plus, Wallet } from "lucide-react";
+import { Menu, Wallet } from "lucide-react";
 
 import Sidebar from "@/components/layout/sidebar";
 
@@ -61,15 +60,6 @@ export default function AppLayout({
               {pageTitle(pathname)}
             </h1>
           </div>
-
-          <Link
-            href="/transactions/new"
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-          >
-            <Plus size={18} />
-            <span className="hidden sm:inline">Nueva transacción</span>
-            <span className="sm:hidden">Nuevo</span>
-          </Link>
         </header>
 
         <div className="mx-auto max-w-[1600px] p-5 sm:p-8">{children}</div>
